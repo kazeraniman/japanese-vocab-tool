@@ -24,8 +24,11 @@ jobs:
       - name: Extract dictionary file
         run: gzip -d JMdict.xml.gz
 
+      - name: Convert to JSON
+        run: cat JMdict.xml | xq . > JMdict.json
+
       - name: Print the file contents
-        run: echo "$(cat JMdict.xml)"
+        run: echo "$(cat JMdict.json)"
 
 #      # Runs a set of commands using the runners shell
 #      - name: Run a multi-line script
