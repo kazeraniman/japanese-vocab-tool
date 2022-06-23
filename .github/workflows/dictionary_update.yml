@@ -20,6 +20,9 @@ jobs:
       - name: Download the dictionary file
         run: wget http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz -O JMdict.gz
 
+      - name: Extract dictionary file
+        run: gzip -d JMdict.gz
+
 #      # Runs a set of commands using the runners shell
 #      - name: Run a multi-line script
 #        run: |
