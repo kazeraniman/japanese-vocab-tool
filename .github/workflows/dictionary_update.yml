@@ -25,7 +25,7 @@ jobs:
       - name: Extract dictionary file
         run: gzip -d JMdict.xml.gz
 
-      - uses: fabasoad/yaml-json-xml-converter-action@v1.0.14
+      - uses: fabasoad/yaml-json-xml-converter-action@v1.0.0
         id: xml2json
         with:
           path: 'JMdict.xml'
