@@ -18,7 +18,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Download the dictionary file
-        run: wget http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz -0 JMdict.gz
+        run: wget http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz -O JMdict.gz
 
 #      # Runs a set of commands using the runners shell
 #      - name: Run a multi-line script
