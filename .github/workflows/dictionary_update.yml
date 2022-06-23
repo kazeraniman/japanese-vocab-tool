@@ -16,24 +16,25 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Setup git repo
+        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
       - name: Download the dictionary file
         run: wget http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz -O JMdict.xml.gz
 
       - name: Extract dictionary file
         run: gzip -d JMdict.xml.gz
 
-      - uses: fabasoad/yaml-json-xml-converter-action@v1.0.0
-        id: xml2json
-        with:
-          path: 'JMdict.xml'
-          from: 'xml'
-          to: 'json'
+      - name: Install parser
+        run: npm i -g jmdict-parser
 
-      - name: Convert to JSON
-        run: echo "${{ steps.xml2json.outputs.data }}"
+      - name: Parse dictionary
+        run: jmdict-parser JMdict.xml
 
 #      # Runs a set of commands using the runners shell
 #      - name: Run a multi-line script
