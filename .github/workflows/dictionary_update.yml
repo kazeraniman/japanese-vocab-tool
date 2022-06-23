@@ -1,21 +1,15 @@
 name: Dictionary Update
 
-# Controls when the workflow will run
 on:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   update_dict:
     name: Update Dictionary
 
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Setup git repo
         uses: actions/checkout@v3
 
@@ -25,27 +19,21 @@ jobs:
           node-version: '14'
 
       - name: Download the dictionary file
-        run: wget http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz -O JMdict.gz
+        run: curl http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz --create-dirs -o src/resources/JMdict.gz
 
       - name: Extract dictionary file
-        run: gzip -d JMdict.gz
+        run: gzip -d src/resources/JMdict.gz
 
       - name: Install parser
         run: npm i -g jmdict-parser
 
       - name: Parse dictionary
-        run: jmdict-parser JMdict
+        run: jmdict-parser src/resources/JMdict
 
       - name: Commit the JSON
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add JMdict.json
+          git add src/resources/JMdict.json
           git commit -m "Automated dictionary update."
           git push
-
-#      # Runs a set of commands using the runners shell
-#      - name: Run a multi-line script
-#        run: |
-#          echo Add other actions to build,
-#          echo test, and deploy your project.
