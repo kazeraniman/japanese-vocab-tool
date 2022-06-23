@@ -25,16 +25,24 @@ jobs:
           node-version: '14'
 
       - name: Download the dictionary file
-        run: wget http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz -O JMdict.xml.gz
+        run: wget http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz -O JMdict.gz
 
       - name: Extract dictionary file
-        run: gzip -d JMdict.xml.gz
+        run: gzip -d JMdict.gz
 
       - name: Install parser
         run: npm i -g jmdict-parser
 
       - name: Parse dictionary
-        run: jmdict-parser JMdict.xml
+        run: jmdict-parser JMdict
+
+      - name: Commit the JSON
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add JMdict.json
+          git commit -m ""
+          git push
 
 #      # Runs a set of commands using the runners shell
 #      - name: Run a multi-line script
