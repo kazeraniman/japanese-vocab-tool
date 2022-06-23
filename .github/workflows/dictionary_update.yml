@@ -15,7 +15,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - uses: sergeysova/jq-action@v2
 
       # Runs a single command using the runners shell
       - name: Download the dictionary file
@@ -24,11 +23,15 @@ jobs:
       - name: Extract dictionary file
         run: gzip -d JMdict.xml.gz
 
-      - name: Convert to JSON
-        run: cat JMdict.xml | xq . > JMdict.json
+      - uses: fabasoad/yaml-json-xml-converter-action@main
+        id: xml2json
+        with:
+          path: 'JMdict.xml'
+          from: 'xml'
+          to: 'json'
 
-      - name: Print the file contents
-        run: echo "$(cat JMdict.json)"
+      - name: Convert to JSON
+        run: echo "${{ steps.xml2json.outputs.data }}"
 
 #      # Runs a set of commands using the runners shell
 #      - name: Run a multi-line script
