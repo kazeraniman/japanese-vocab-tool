@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import LoadingIcon from "components/loading-icon/LoadingIcon";
+import Hiragana from "../../utility/hiragana";
 
 interface IProps {
 }
@@ -22,19 +23,23 @@ class App extends React.Component<IProps, IState> {
 
     componentDidMount() {
         let jmDict = require('resources/JMdict.json');
-        let intermediaryList: any[] = [];
-        let i = 0;
+        let intermediarySet = new Set<string>();
 
         jmDict.forEach(function(entry: any) {
-            if (i < 10 && "r_ele" in entry && entry.r_ele.length > 0 && "reb" in entry.r_ele[0] && entry.r_ele[0].reb.length > 0) {
-                intermediaryList.push(...entry.r_ele[0].reb);
-                i++;
+            if ("r_ele" in entry && entry.r_ele.length > 0 && "reb" in entry.r_ele[0] && entry.r_ele[0].reb.length > 0) {
+                entry.r_ele[0].reb.forEach(function(word: string) {
+                   let charSet = new Set<string>(word.split(""));
+                   let setDiff = new Set([...charSet].filter(x => !Hiragana.HiraganaSet.has(x)));
+                   if (setDiff.size === 0) {
+                       intermediarySet.add(word);
+                   }
+                });
             }
         });
 
         this.setState({
             isLoaded: true,
-            wordList: intermediaryList
+            wordList: Array.from(intermediarySet).sort()
         });
     }
 
