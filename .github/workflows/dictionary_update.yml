@@ -2,6 +2,8 @@ name: Dictionary Update
 
 on:
   workflow_dispatch:
+  schedule:
+  - cron: '7 4 2 * *' # Random time on a day as GitHub recommends picking something other than hour barriers to avoid delays.
 
 jobs:
   update_dict:
