@@ -1,27 +1,41 @@
 name: Dictionary Update
 
-# Controls when the workflow will run
 on:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  schedule:
+  - cron: '7 4 2 * *' # Random time on a day as GitHub recommends picking something other than hour barriers to avoid delays.
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   update_dict:
-    # The type of runner that the job will run on
+    name: Update Dictionary
+
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Setup git repo
+        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Download the dictionary file
+        run: curl http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz --create-dirs -o src/resources/JMdict.gz
+
+      - name: Extract dictionary file
+        run: gzip -d src/resources/JMdict.gz
+
+      - name: Install parser
+        run: npm i -g jmdict-parser
+
+      - name: Parse dictionary
+        run: jmdict-parser src/resources/JMdict
+
+      - name: Commit the JSON
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add src/resources/JMdict.json
+          git commit -m "Automated dictionary update." || echo "No dictionary changes to commit."
+          git push
