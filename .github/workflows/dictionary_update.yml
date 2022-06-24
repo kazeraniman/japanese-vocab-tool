@@ -37,5 +37,5 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add src/resources/JMdict.json
-          git commit -m "Automated dictionary update."
+          git commit -m "Automated dictionary update." || echo "No dictionary changes to commit."
           git push
