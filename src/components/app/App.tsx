@@ -55,7 +55,7 @@ class App extends React.Component<IProps, IState> {
             isLoaded: false,
             wordList: [],
             filteredWordList: [],
-            selectedHiragana: Object.assign({}, ...Array.from(Hiragana.HiraganaSet).map((character) => ({[character]: pastSelectedHiragana[character] === null ? true : pastSelectedHiragana[character]}))),
+            selectedHiragana: Object.assign({}, ...Array.from(Hiragana.HiraganaSet).map((character) => ({[character]: pastSelectedHiragana[character] == null ? true : pastSelectedHiragana[character]}))),
             charSets: {}
         };
 
