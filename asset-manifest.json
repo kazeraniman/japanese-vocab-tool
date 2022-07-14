@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/japanese-vocab-tool/static/css/main.014c69b8.css",
-    "main.js": "/japanese-vocab-tool/static/js/main.ae23053c.js",
+    "main.css": "/japanese-vocab-tool/static/css/main.42836b20.css",
+    "main.js": "/japanese-vocab-tool/static/js/main.7ad323ef.js",
     "static/js/787.920d3556.chunk.js": "/japanese-vocab-tool/static/js/787.920d3556.chunk.js",
     "index.html": "/japanese-vocab-tool/index.html",
-    "main.014c69b8.css.map": "/japanese-vocab-tool/static/css/main.014c69b8.css.map",
-    "main.ae23053c.js.map": "/japanese-vocab-tool/static/js/main.ae23053c.js.map",
+    "main.42836b20.css.map": "/japanese-vocab-tool/static/css/main.42836b20.css.map",
+    "main.7ad323ef.js.map": "/japanese-vocab-tool/static/js/main.7ad323ef.js.map",
     "787.920d3556.chunk.js.map": "/japanese-vocab-tool/static/js/787.920d3556.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.014c69b8.css",
-    "static/js/main.ae23053c.js"
+    "static/css/main.42836b20.css",
+    "static/js/main.7ad323ef.js"
   ]
 }
