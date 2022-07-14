@@ -2,6 +2,18 @@ import React from 'react';
 import './App.css';
 import LoadingIcon from "components/loading-icon/LoadingIcon";
 import Hiragana from "../../utility/hiragana";
+import {
+    Button,
+    Checkbox,
+    createTheme,
+    FormControlLabel,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    ThemeProvider
+} from "@mui/material";
+import {DataGrid, GridRowsProp, GridColDef} from '@mui/x-data-grid';
 
 interface IProps {
 }
@@ -9,37 +21,82 @@ interface IProps {
 interface IState {
     isLoaded: boolean;
     wordList: any[];
+    filteredWordList: GridRowsProp[];
+    selectedHiragana: { [name: string]: boolean };
+    charSets: { [name: string]: Set<string> }
 }
+
+const columns: GridColDef[] = [
+    { field: 'reading', headerName: 'Reading', minWidth: 250, flex: 0 },
+    { field: 'kanji', headerName: 'Kanji', minWidth: 250, flex: 0 },
+    { field: 'meaning', headerName: 'Meaning', flex: 1 }
+];
+
+const tableTheme = createTheme({
+    components: {
+        MuiTable: {
+            styleOverrides: {
+                root: {
+                    "maxWidth": '600px',
+                    "display": "inline-table"
+                },
+            },
+        },
+    },
+});
 
 class App extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
 
+        let pastSelectedHiragana : { [name: string]: boolean } = JSON.parse(localStorage.getItem("selectedHiragana") || "{}");
+
         this.state = {
             isLoaded: false,
-            wordList: []
-        }
+            wordList: [],
+            filteredWordList: [],
+            selectedHiragana: Object.assign({}, ...Array.from(Hiragana.HiraganaSet).map((character) => ({[character]: pastSelectedHiragana[character] === null ? true : pastSelectedHiragana[character]}))),
+            charSets: {}
+        };
+
+        this.hiraganaCheckboxChangeHandler = this.hiraganaCheckboxChangeHandler.bind(this);
+        this.applyFilter = this.applyFilter.bind(this);
+        this.filterWordList = this.filterWordList.bind(this);
     }
 
     componentDidMount() {
-        let jmDict = require('resources/JMdict.json');
-        let intermediarySet = new Set<string>();
+        let jmDict = require('resources/FilteredJMdict.json');
+        let charSets: { [name: string]: Set<string> } = {};
 
         jmDict.forEach(function(entry: any) {
-            if ("r_ele" in entry && entry.r_ele.length > 0 && "reb" in entry.r_ele[0] && entry.r_ele[0].reb.length > 0) {
-                entry.r_ele[0].reb.forEach(function(word: string) {
-                   let charSet = new Set<string>(word.split(""));
-                   let setDiff = new Set([...charSet].filter(x => !Hiragana.HiraganaSet.has(x)));
-                   if (setDiff.size === 0) {
-                       intermediarySet.add(word);
-                   }
-                });
-            }
+            let word = entry["reading"];
+            charSets[word] = new Set<string>(word.split(""));
         });
 
         this.setState({
-            isLoaded: true,
-            wordList: Array.from(intermediarySet).sort()
+            wordList: jmDict,
+            charSets: charSets
+        }, this.filterWordList);
+    }
+
+    applyFilter() {
+        localStorage.setItem("selectedHiragana", JSON.stringify(this.state.selectedHiragana));
+        this.setState({
+            isLoaded: false
+        }, this.filterWordList);
+    }
+
+    hiraganaCheckboxChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({
+            selectedHiragana: {...this.state.selectedHiragana, [event.target.name]: event.target.checked}
+        });
+    }
+
+    filterWordList() {
+        let allowableCharacters = new Set<string>(Object.keys(this.state.selectedHiragana).filter(key => this.state.selectedHiragana[key]));
+        this.setState({
+            filteredWordList: this.state.wordList.filter(word => new Set([...this.state.charSets[word["reading"]]].filter(x => !allowableCharacters.has(x))).size === 0),
+            isLoaded: true
         });
     }
 
@@ -55,9 +112,43 @@ class App extends React.Component<IProps, IState> {
         return (
             <div className="App">
                 <div className="AppContents">
-                    <ul>
-                        {this.state.wordList.map((word) => <li key={word}>{word}</li>)}
-                    </ul>
+                    <div className="HiraganaCheckboxes">
+                        <ThemeProvider theme={tableTheme}>
+                            <Table className="HiraganaTable" size="small">
+                                <TableBody>
+                                    {
+                                        Hiragana.MainHiraganaRows.map((row) => {
+                                            return <TableRow className="HiraganaCheckboxRow" key={"hiragana-row-checkbox-row-" + row[0]}>
+                                                {/*<TableCell className="HiraganaCheckboxCell">*/}
+                                                {/*    <Checkbox key={"hiragana-row-checkbox-" + row[0]}/>*/}
+                                                {/*</TableCell>*/}
+                                                {
+                                                    row.map((character, index) => <TableCell className="HiraganaCheckboxCell" key={"hiragana-cell-checkbox-" + row[0] + "-" + index}>{character != null && <FormControlLabel
+                                                        control={<Checkbox key={"hiragana-checkbox-" + character} name={character} checked={this.state.selectedHiragana[character]} onChange={this.hiraganaCheckboxChangeHandler}/>}
+                                                        label={character}/>}</TableCell>)
+                                                }
+                                            </TableRow>
+                                        })
+                                    }
+                                </TableBody>
+                            </Table>
+                        </ThemeProvider>
+                        <Button variant="contained" onClick={this.applyFilter}>Apply Filter</Button>
+                    </div>
+                    <div className="WordTable">
+                        <DataGrid
+                            rows={this.state.filteredWordList}
+                            columns={columns}
+                            sortingOrder={['asc', 'desc']}
+                            initialState={{
+                                sorting: {
+                                    sortModel: [{ field: 'reading', sort: 'asc' }],
+                                },
+                            }}
+                            disableSelectionOnClick
+                            pageSize={25}
+                        />
+                    </div>
                 </div>
                 <footer className="MainFooter">
                     <span className="JMDict-Attribution">This site uses the <a href="http://www.edrdg.org/wiki/index.php/JMdict-EDICT_Dictionary_Project">JMdict/EDICT</a> and <a href="http://www.edrdg.org/wiki/index.php/KANJIDIC_Project">KANJIDIC</a> dictionary files. These files are the property of the <a href="http://www.edrdg.org/">Electronic Dictionary Research and Development Group</a>, and are used in conformance with the Group's <a href="http://www.edrdg.org/edrdg/licence.html">licence</a>.</span>
