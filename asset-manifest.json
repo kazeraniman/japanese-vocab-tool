@@ -1,16 +1,15 @@
 {
   "files": {
-    "main.css": "/japanese-vocab-tool/static/css/main.073c9b0a.css",
-    "main.js": "/japanese-vocab-tool/static/js/main.bbba5517.js",
+    "main.css": "/japanese-vocab-tool/static/css/main.014c69b8.css",
+    "main.js": "/japanese-vocab-tool/static/js/main.60cb8ed6.js",
     "static/js/787.920d3556.chunk.js": "/japanese-vocab-tool/static/js/787.920d3556.chunk.js",
-    "static/media/logo.svg": "/japanese-vocab-tool/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/japanese-vocab-tool/index.html",
-    "main.073c9b0a.css.map": "/japanese-vocab-tool/static/css/main.073c9b0a.css.map",
-    "main.bbba5517.js.map": "/japanese-vocab-tool/static/js/main.bbba5517.js.map",
+    "main.014c69b8.css.map": "/japanese-vocab-tool/static/css/main.014c69b8.css.map",
+    "main.60cb8ed6.js.map": "/japanese-vocab-tool/static/js/main.60cb8ed6.js.map",
     "787.920d3556.chunk.js.map": "/japanese-vocab-tool/static/js/787.920d3556.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.bbba5517.js"
+    "static/css/main.014c69b8.css",
+    "static/js/main.60cb8ed6.js"
   ]
 }
