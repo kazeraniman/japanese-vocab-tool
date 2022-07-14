@@ -66,8 +66,7 @@ class App extends React.Component<IProps, IState> {
 
     componentDidMount() {
         let charSets: { [name: string]: Set<string> } = {};
-        // @ts-ignore
-        fetch(process.env.REACT_APP_DICTIONARY_URL.toString())
+        fetch("https://raw.githubusercontent.com/kazeraniman/japanese-vocab-tool/main/src/resources/FilteredJMdict.json")
             .then(response => response.json())
             .then(jmDict => {
                 jmDict.forEach(function(entry: any) {
