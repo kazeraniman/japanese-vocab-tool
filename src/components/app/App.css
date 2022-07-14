@@ -12,3 +12,12 @@
 .MainFooter {
     width: 100%;
 }
+
+.HiraganaCheckboxes {
+    display: inline-block;
+}
+
+.WordTable {
+    width: 100%;
+    height: 500px;
+}

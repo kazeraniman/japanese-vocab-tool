@@ -20,6 +20,11 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
       - name: Download the dictionary file
         run: curl http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz --create-dirs -o src/resources/JMdict.gz
 
@@ -32,10 +37,13 @@ jobs:
       - name: Parse dictionary
         run: jmdict-parser src/resources/JMdict
 
+      - name: Filter dictionary
+        run: python scripts/dict_parser.py src/resources/JMdict.json src/resources/FilteredJMdict.json
+
       - name: Commit the JSON
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add src/resources/JMdict.json
+          git add src/resources/JMdict.json src/resources/FilteredJMdict.json
           git commit -m "Automated dictionary update." || echo "No dictionary changes to commit."
           git push
