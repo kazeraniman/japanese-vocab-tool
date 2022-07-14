@@ -15,6 +15,8 @@ import {
 } from "@mui/material";
 import {DataGrid, GridRowsProp, GridColDef} from '@mui/x-data-grid';
 
+let jmDict = require('resources/FilteredJMdict.json');
+
 interface IProps {
 }
 
@@ -65,7 +67,6 @@ class App extends React.Component<IProps, IState> {
     }
 
     componentDidMount() {
-        let jmDict = require('resources/FilteredJMdict.json');
         let charSets: { [name: string]: Set<string> } = {};
 
         jmDict.forEach(function(entry: any) {
