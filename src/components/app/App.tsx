@@ -15,8 +15,6 @@ import {
 } from "@mui/material";
 import {DataGrid, GridRowsProp, GridColDef} from '@mui/x-data-grid';
 
-let jmDict = require('resources/FilteredJMdict.json');
-
 interface IProps {
 }
 
@@ -68,16 +66,20 @@ class App extends React.Component<IProps, IState> {
 
     componentDidMount() {
         let charSets: { [name: string]: Set<string> } = {};
+        // @ts-ignore
+        fetch(process.env.REACT_APP_DICTIONARY_URL.toString())
+            .then(response => response.json())
+            .then(jmDict => {
+                jmDict.forEach(function(entry: any) {
+                    let word = entry["reading"];
+                    charSets[word] = new Set<string>(word.split(""));
+                });
 
-        jmDict.forEach(function(entry: any) {
-            let word = entry["reading"];
-            charSets[word] = new Set<string>(word.split(""));
-        });
-
-        this.setState({
-            wordList: jmDict,
-            charSets: charSets
-        }, this.filterWordList);
+                this.setState({
+                    wordList: jmDict,
+                    charSets: charSets
+                }, this.filterWordList);
+            });
     }
 
     applyFilter() {
