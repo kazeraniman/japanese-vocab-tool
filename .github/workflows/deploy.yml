@@ -38,7 +38,7 @@ jobs:
       - name: Set push deploy message
         if: env.GITHUB_EVENT_NAME == 'push'
         env:
-          DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.commits[0]["id"] }}
+          DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }}
         run: echo "Deploy test message - $DEPLOY_MESSAGE"
 #
 #      - name: Echo results
