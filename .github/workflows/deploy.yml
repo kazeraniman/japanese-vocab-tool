@@ -29,17 +29,17 @@ jobs:
       - name: Var check
         run: echo "$GITHUB_EVENT_NAME"
 
-#      - name: Set workflow dispatch deploy message
-#        if: env.GITHUB_EVENT_NAME == 'workflow_dispatch'
-#        env:
-#          DEPLOY_MESSAGE: Manual deploy.
-#        run: echo "Deploy test message - $DEPLOY_MESSAGE"
+      - name: Set workflow dispatch deploy message
+        if: env.GITHUB_EVENT_NAME == 'workflow_dispatch'
+        env:
+          DEPLOY_MESSAGE: Manual deploy.
+        run: echo "Deploy test message - $DEPLOY_MESSAGE"
 #
-#      - name: Set push deploy message
-#        if: $env.GITHUB_EVENT_NAME == 'push'
-#        env:
-#          DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.commits[0][id] }}
-#        run: echo "Deploy test message - $DEPLOY_MESSAGE"
+      - name: Set push deploy message
+        if: env.GITHUB_EVENT_NAME == 'push'
+        env:
+          DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.commits[0][id] }}
+        run: echo "Deploy test message - $DEPLOY_MESSAGE"
 #
 #      - name: Echo results
 #        run: echo "$DEPLOY_MESSAGE"
