@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Setup git repo
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_PAGES_DEPLOY }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -48,8 +46,6 @@ jobs:
         env:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
-          github_token: ${{ secrets.GH_PAGES_DEPLOY }}
-          repository: ${{ github.repository }}
         run: |
           git config user.name $user_name
           git config user.email $user_email
