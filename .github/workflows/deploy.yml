@@ -39,4 +39,7 @@ jobs:
         run: echo "Set deploy message - $DEPLOY_MESSAGE"
 
       - name: Deploy to gh-pages
-        run: npm run deploy -- -m "$DEPLOY_MESSAGE"
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          npm run deploy -- -m "${DEPLOY_MESSAGE}"
