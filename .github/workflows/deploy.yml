@@ -38,8 +38,11 @@ jobs:
           DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }} - ${{ github.event.head_commit.message }}
         run: echo "Set deploy message - $DEPLOY_MESSAGE"
 
-      - name: Deploy to gh-pages
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          npm run deploy -- -m "${{ env.DEPLOY_MESSAGE }}"
+      - name: Test deploy message
+        run: echo "$DEPLOY_MESSAGE"
+
+#      - name: Deploy to gh-pages
+#        run: |
+#          git config user.name github-actions
+#          git config user.email github-actions@github.com
+#          npm run deploy -- -m "${{ env.DEPLOY_MESSAGE }}"
