@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Setup git repo
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAGES_DEPLOY }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -51,5 +53,4 @@ jobs:
         run: |
           git config user.name $user_name
           git config user.email $user_email
-          git remote set-url origin https://${github_token}@github.com/${repository}
           npm run deploy -- -m "$DEPLOY_MESSAGE"
