@@ -44,8 +44,8 @@ jobs:
 
       - name: Deploy to gh-pages
         env:
-          USER_NAME: 'github-actions[bot]'
-          USER_EMAIL: 'github-actions[bot]@users.noreply.github.com'
+          USER_NAME: github-actions
+          USER_EMAIL: github-actions@github.com
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git

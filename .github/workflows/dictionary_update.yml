@@ -42,8 +42,8 @@ jobs:
 
       - name: Commit the JSON
         env:
-          USER_NAME: 'github-actions[bot]'
-          USER_EMAIL: 'github-actions[bot]@users.noreply.github.com'
+          USER_NAME: github-actions
+          USER_EMAIL: github-actions@github.com
         run: |
           git config user.name $USER_NAME
           git config user.email $USER_EMAIL
