@@ -40,7 +40,9 @@ jobs:
           DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }} - ${{ github.event.head_commit.message }}
         run: |
           echo "Set deploy message - $DEPLOY_MESSAGE"
-          echo "DEPLOY_MESSAGE=$DEPLOY_MESSAGE" >> $GITHUB_ENV
+          echo "DEPLOY_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$DEPLOY_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Deploy to gh-pages
         env:
