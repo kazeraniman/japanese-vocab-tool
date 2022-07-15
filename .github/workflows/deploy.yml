@@ -31,18 +31,18 @@ jobs:
         env:
           DEPLOY_MESSAGE: Manual deploy.
         run: |
-          echo 'Set deploy message - $DEPLOY_MESSAGE'
-          echo 'DEPLOY_MESSAGE=$DEPLOY_MESSAGE' >> $GITHUB_ENV
+          echo "Set deploy message - $DEPLOY_MESSAGE"
+          echo "DEPLOY_MESSAGE=$DEPLOY_MESSAGE" >> $GITHUB_ENV
 
       - name: Set push deploy message
         if: github.event_name == 'push'
         env:
           DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }} - ${{ github.event.head_commit.message }}
         run: |
-          echo 'Set deploy message - $DEPLOY_MESSAGE'
-          echo 'DEPLOY_MESSAGE<<EOF' >> $GITHUB_ENV
-          echo '$DEPLOY_MESSAGE' >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          echo "Set deploy message - $DEPLOY_MESSAGE"
+          echo "DEPLOY_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$DEPLOY_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Deploy to gh-pages
         env:
@@ -51,4 +51,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npm run deploy -- -m '$DEPLOY_MESSAGE' -u '$USER_NAME <$USER_EMAIL>'
+          npm run deploy -- -m "$DEPLOY_MESSAGE" -u "$USER_NAME <$USER_EMAIL>"
