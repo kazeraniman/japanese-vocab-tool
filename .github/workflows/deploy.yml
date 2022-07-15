@@ -43,7 +43,13 @@ jobs:
           echo "DEPLOY_MESSAGE=$DEPLOY_MESSAGE" >> $GITHUB_ENV
 
       - name: Deploy to gh-pages
+        env:
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          github_token: ${{ secrets.GH_PAGES_DEPLOY }}
+          repository: ${{ github.repository }}
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name $user_name
+          git config user.email $user_email
+          git remote set-url origin https://${github_token}@github.com/${repository}
           npm run deploy -- -m "$DEPLOY_MESSAGE"
