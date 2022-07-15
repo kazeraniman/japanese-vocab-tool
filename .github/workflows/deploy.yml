@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    if: ${{ $GITHUB_EVENT_NAME == 'workflow_dispatch' || ($GITHUB_EVENT_NAME == 'push' && github.event.pusher.name != 'github-pages' && github.event.commits[0] != null) }}
+    if: ${{ env.GITHUB_EVENT_NAME == 'workflow_dispatch' || (env.GITHUB_EVENT_NAME == 'push' && github.event.pusher.name != 'github-pages' && github.event.commits[0] != null) }}
 
     name: Deploy
 
@@ -27,13 +27,13 @@ jobs:
         run: npm ci
 
       - name: Set workflow dispatch deploy message
-        if: ${{ $GITHUB_EVENT_NAME == 'workflow_dispatch' }}
+        if: ${{ env.GITHUB_EVENT_NAME == 'workflow_dispatch' }}
         env:
           DEPLOY_MESSAGE: Manual deploy.
         run: echo "Deploy test message - $DEPLOY_MESSAGE"
 
       - name: Set push deploy message
-        if: ${{ $GITHUB_EVENT_NAME == 'push' }}
+        if: ${{ env.GITHUB_EVENT_NAME == 'push' }}
         env:
           DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.commits[0][id] }}
         run: echo "Deploy test message - $DEPLOY_MESSAGE"
