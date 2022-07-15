@@ -30,13 +30,17 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           DEPLOY_MESSAGE: Manual deploy.
-        run: echo "Set deploy message - $DEPLOY_MESSAGE"
+        run: |
+          echo "Set deploy message - $DEPLOY_MESSAGE"
+          echo "DEPLOY_MESSAGE=$DEPLOY_MESSAGE" >> $GITHUB_ENV
 
       - name: Set push deploy message
         if: github.event_name == 'push'
         env:
           DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }} - ${{ github.event.head_commit.message }}
-        run: echo "Set deploy message - $DEPLOY_MESSAGE"
+        run: |
+          echo "Set deploy message - $DEPLOY_MESSAGE"
+          echo "DEPLOY_MESSAGE=$DEPLOY_MESSAGE" >> $GITHUB_ENV
 
       - name: Test deploy message
         run: echo "$DEPLOY_MESSAGE"
