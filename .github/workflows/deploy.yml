@@ -6,13 +6,9 @@ on:
     branches:
       - main
 
-env:
-  WORKFLOW: workflow_dispatch
-  PUSH: push
-
 jobs:
   deploy:
-#    if: env.GITHUB_EVENT_NAME == 'workflow_dispatch' || (env.GITHUB_EVENT_NAME == 'push' && github.event.pusher.name != 'github-pages' && github.event.commits[0] != null)
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.event.pusher.name != 'github-pages')
 
     name: Deploy
 
@@ -34,16 +30,13 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           DEPLOY_MESSAGE: Manual deploy.
-        run: echo "Deploy test message - $DEPLOY_MESSAGE"
+        run: echo "Set deploy message - $DEPLOY_MESSAGE"
 #
       - name: Set push deploy message
         if: github.event_name == 'push'
         env:
           DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }}
-        run: echo "Deploy test message - $DEPLOY_MESSAGE"
-#
-#      - name: Echo results
-#        run: echo "$DEPLOY_MESSAGE"
+        run: echo "Set deploy message - $DEPLOY_MESSAGE"
 
 #      - name: Deploy to gh-pages
 #        run: npm run deploy -- -m "Automated deploy."
