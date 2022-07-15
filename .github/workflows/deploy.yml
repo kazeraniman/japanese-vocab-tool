@@ -15,28 +15,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-#      - name: Setup git repo
-#        uses: actions/checkout@v3
-#
-#      - name: Setup Node.js
-#        uses: actions/setup-node@v2
-#        with:
-#          node-version: '14'
-#
-#      - name: Install dependencies
-#        run: npm ci
+      - name: Setup git repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Set workflow dispatch deploy message
         if: github.event_name == 'workflow_dispatch'
         env:
           DEPLOY_MESSAGE: Manual deploy.
         run: echo "Set deploy message - $DEPLOY_MESSAGE"
-#
+
       - name: Set push deploy message
         if: github.event_name == 'push'
         env:
-          DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }}
+          DEPLOY_MESSAGE: Automated deploy triggered by commit ${{ github.event.head_commit.id }} - ${{ github.event.head_commit.message }}
         run: echo "Set deploy message - $DEPLOY_MESSAGE"
 
-#      - name: Deploy to gh-pages
-#        run: npm run deploy -- -m "Automated deploy."
+      - name: Deploy to gh-pages
+        run: npm run deploy -- -m "$DEPLOY_MESSAGE"
