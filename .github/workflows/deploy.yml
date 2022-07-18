@@ -5,10 +5,17 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'public/**'
+      - 'src/**'
+      - '!src/resources/**.json'
 
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.event.pusher.name != 'github-pages')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.event.pusher.name != 'github-actions')
 
     name: Deploy
 
