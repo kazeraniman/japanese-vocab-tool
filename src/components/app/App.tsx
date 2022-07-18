@@ -146,9 +146,11 @@ class App extends React.Component<IProps, IState> {
                                 sorting: {
                                     sortModel: [{ field: 'reading', sort: 'asc' }],
                                 },
+                                pagination: {
+                                    pageSize: 25,
+                                }
                             }}
                             disableSelectionOnClick
-                            pageSize={25}
                         />
                     </div>
                 </div>
