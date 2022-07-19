@@ -2,9 +2,10 @@ import React from 'react';
 import './App.css';
 import LoadingIcon from "components/loading-icon/LoadingIcon";
 import Hiragana from "../../utility/hiragana";
-import { Button } from "@mui/material";
+import {Box, Button, Popover, Tab, Tabs} from "@mui/material";
 import {DataGrid, GridRowsProp, GridColDef} from '@mui/x-data-grid';
 import CharacterCheckboxes from "../character-checkboxes/CharacterCheckboxes";
+import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 
 const columns: GridColDef[] = [
     { field: 'reading', headerName: 'Reading', minWidth: 250, flex: 0 },
@@ -23,6 +24,7 @@ interface IState {
     filteredWordList: GridRowsProp[];
     selectedHiragana: { [name: string]: boolean };
     charSets: { [name: string]: Set<string> };
+    hiraganaTableTab: number;
 }
 
 class App extends React.Component<IProps, IState> {
@@ -37,12 +39,14 @@ class App extends React.Component<IProps, IState> {
             wordList: [],
             filteredWordList: [],
             selectedHiragana: initiallySelectedCharacters,
-            charSets: {}
+            charSets: {},
+            hiraganaTableTab: 0
         };
 
         this.applyFilter = this.applyFilter.bind(this);
         this.filterWordList = this.filterWordList.bind(this);
         this.charactersChangedHandler = this.charactersChangedHandler.bind(this);
+        this.hiraganaCheckboxTabChangedHandler = this.hiraganaCheckboxTabChangedHandler.bind(this);
     }
 
     componentDidMount() {
@@ -75,6 +79,12 @@ class App extends React.Component<IProps, IState> {
         });
     }
 
+    hiraganaCheckboxTabChangedHandler(event: React.SyntheticEvent, newValue: number) {
+        this.setState({
+            hiraganaTableTab: newValue
+        });
+    }
+
     filterWordList() {
         let allowableCharacters = new Set<string>(Object.keys(this.state.selectedHiragana).filter(key => this.state.selectedHiragana[key]));
         this.setState({
@@ -95,26 +105,60 @@ class App extends React.Component<IProps, IState> {
         return (
             <div className="App">
                 <div className="AppContents">
-                    <div className="HiraganaCheckboxes">
-                        <CharacterCheckboxes
-                            characterRows={Hiragana.MainHiraganaRows}
-                            previouslySelectedCharacters={this.state.selectedHiragana}
-                            charactersChangedCallback={this.charactersChangedHandler}
-                        />
-                        <CharacterCheckboxes
-                            characterRows={Hiragana.AdditionalHiraganaRows}
-                            previouslySelectedCharacters={this.state.selectedHiragana}
-                            charactersChangedCallback={this.charactersChangedHandler}
-                        />
-                        <CharacterCheckboxes
-                            characterRows={Hiragana.SpecialHiraganaRows}
-                            previouslySelectedCharacters={this.state.selectedHiragana}
-                            charactersChangedCallback={this.charactersChangedHandler}
-                        />
-                        <div className="ApplyFilterButton">
-                            <Button variant="contained" onClick={this.applyFilter}>Apply Filter</Button>
-                        </div>
-                    </div>
+                    <PopupState variant="popover" popupId="FilterPopover">
+                            {(popupState) => (
+                                <div>
+                                    <Box sx={{ m: 1 }}>
+                                        <Button variant="contained" {...bindTrigger(popupState)}>
+                                            Filters
+                                        </Button>
+                                    </Box>
+                                    <Popover
+                                        {...bindPopover(popupState)}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <div className="HiraganaCheckboxes">
+                                            <Tabs value={this.state.hiraganaTableTab} onChange={this.hiraganaCheckboxTabChangedHandler} centered>
+                                                <Tab label="Main Hiragana" />
+                                                <Tab label="Additional Hiragana" />
+                                                <Tab label="Special Hiragana" />
+                                            </Tabs>
+                                            { this.state.hiraganaTableTab === 0 &&
+                                                <CharacterCheckboxes
+                                                    characterRows={Hiragana.MainHiraganaRows}
+                                                    previouslySelectedCharacters={this.state.selectedHiragana}
+                                                    charactersChangedCallback={this.charactersChangedHandler}
+                                                />
+                                            }
+                                            { this.state.hiraganaTableTab === 1 &&
+                                                <CharacterCheckboxes
+                                                    characterRows={Hiragana.AdditionalHiraganaRows}
+                                                    previouslySelectedCharacters={this.state.selectedHiragana}
+                                                    charactersChangedCallback={this.charactersChangedHandler}
+                                                />
+                                            }
+                                            { this.state.hiraganaTableTab === 2 &&
+                                                <CharacterCheckboxes
+                                                    characterRows={Hiragana.SpecialHiraganaRows}
+                                                    previouslySelectedCharacters={this.state.selectedHiragana}
+                                                    charactersChangedCallback={this.charactersChangedHandler}
+                                                />
+                                            }
+                                            <div className="ApplyFilterButton">
+                                                <Button variant="contained" onClick={this.applyFilter}>Apply Filter</Button>
+                                            </div>
+                                        </div>
+                                    </Popover>
+                                </div>
+                            )}
+                        </PopupState>
                     <div className="WordTable">
                         <DataGrid
                             rows={this.state.filteredWordList}
