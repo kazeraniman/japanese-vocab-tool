@@ -1,12 +1,14 @@
 .App {
     text-align: center;
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
     flex-direction: column;
 }
 
 .AppContents {
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .MainFooter {
@@ -15,9 +17,11 @@
 
 .HiraganaCheckboxes {
     display: inline-block;
+    text-align: center;
+    padding: 10px;
 }
 
 .WordTable {
     width: 100%;
-    height: 500px;
+    flex: 1;
 }
