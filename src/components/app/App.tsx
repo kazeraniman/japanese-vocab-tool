@@ -2,18 +2,17 @@ import React from 'react';
 import './App.css';
 import LoadingIcon from "components/loading-icon/LoadingIcon";
 import Hiragana from "../../utility/hiragana";
-import {
-    Button,
-    Checkbox,
-    createTheme,
-    FormControlLabel,
-    Table,
-    TableBody,
-    TableCell,
-    TableRow,
-    ThemeProvider
-} from "@mui/material";
+import { Button } from "@mui/material";
 import {DataGrid, GridRowsProp, GridColDef} from '@mui/x-data-grid';
+import CharacterCheckboxes from "../character-checkboxes/CharacterCheckboxes";
+
+const columns: GridColDef[] = [
+    { field: 'reading', headerName: 'Reading', minWidth: 250, flex: 0 },
+    { field: 'kanji', headerName: 'Kanji', minWidth: 250, flex: 0 },
+    { field: 'meaning', headerName: 'Meaning', flex: 1 }
+];
+
+const DICT_URL = "https://raw.githubusercontent.com/kazeraniman/japanese-vocab-tool/main/src/resources/FilteredJMdict.json";
 
 interface IProps {
 }
@@ -23,52 +22,32 @@ interface IState {
     wordList: any[];
     filteredWordList: GridRowsProp[];
     selectedHiragana: { [name: string]: boolean };
-    charSets: { [name: string]: Set<string> }
+    charSets: { [name: string]: Set<string> };
 }
-
-const columns: GridColDef[] = [
-    { field: 'reading', headerName: 'Reading', minWidth: 250, flex: 0 },
-    { field: 'kanji', headerName: 'Kanji', minWidth: 250, flex: 0 },
-    { field: 'meaning', headerName: 'Meaning', flex: 1 }
-];
-
-const tableTheme = createTheme({
-    components: {
-        MuiTable: {
-            styleOverrides: {
-                root: {
-                    "maxWidth": '600px',
-                    "display": "block"
-                },
-            },
-        },
-    },
-});
 
 class App extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
 
-        let pastSelectedHiragana : { [name: string]: boolean } = JSON.parse(localStorage.getItem("selectedHiragana") || "{}");
+        let previouslySelectedCharacters: { [name: string]: boolean } = JSON.parse(localStorage.getItem("selectedHiragana") || "{}");
+        let initiallySelectedCharacters: { [name: string]: boolean } = Object.assign({}, ...Array.from(Hiragana.HiraganaSet).map((character) => ({[character]: previouslySelectedCharacters[character] == null ? true : previouslySelectedCharacters[character]})));
 
         this.state = {
             isLoaded: false,
             wordList: [],
             filteredWordList: [],
-            selectedHiragana: Object.assign({}, ...Array.from(Hiragana.HiraganaSet).map((character) => ({[character]: pastSelectedHiragana[character] == null ? true : pastSelectedHiragana[character]}))),
+            selectedHiragana: initiallySelectedCharacters,
             charSets: {}
         };
 
-        this.hiraganaCheckboxChangeHandler = this.hiraganaCheckboxChangeHandler.bind(this);
-        this.hiraganaRowCheckboxChangeHandler = this.hiraganaRowCheckboxChangeHandler.bind(this);
-        this.hiraganaAllCheckboxChangeHandler = this.hiraganaAllCheckboxChangeHandler.bind(this);
         this.applyFilter = this.applyFilter.bind(this);
         this.filterWordList = this.filterWordList.bind(this);
+        this.charactersChangedHandler = this.charactersChangedHandler.bind(this);
     }
 
     componentDidMount() {
         let charSets: { [name: string]: Set<string> } = {};
-        fetch("https://raw.githubusercontent.com/kazeraniman/japanese-vocab-tool/main/src/resources/FilteredJMdict.json")
+        fetch(DICT_URL)
             .then(response => response.json())
             .then(jmDict => {
                 jmDict.forEach(function(entry: any) {
@@ -90,34 +69,9 @@ class App extends React.Component<IProps, IState> {
         }, this.filterWordList);
     }
 
-    hiraganaCheckboxChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+    charactersChangedHandler(changedCharacters: { [name: string]: boolean }): void {
         this.setState({
-            selectedHiragana: {...this.state.selectedHiragana, [event.target.name]: event.target.checked}
-        });
-    }
-
-    hiraganaRowCheckboxChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
-        let newSelectedHiragana = {...this.state.selectedHiragana};
-        Hiragana.MainHiraganaRows[parseInt(event.target.value)].forEach(character => {
-            if (character == null) {
-                return;
-            }
-
-            return newSelectedHiragana[character] = event.target.checked;
-        });
-
-        this.setState({
-            selectedHiragana: newSelectedHiragana
-        });
-    }
-
-    hiraganaAllCheckboxChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
-
-        let newSelectedHiragana : { [name: string]: boolean } = {};
-        Object.keys(this.state.selectedHiragana).forEach(key => newSelectedHiragana[key] = event.target.checked);
-
-        this.setState({
-            selectedHiragana: newSelectedHiragana
+            selectedHiragana: {...this.state.selectedHiragana, ...changedCharacters}
         });
     }
 
@@ -142,35 +96,20 @@ class App extends React.Component<IProps, IState> {
             <div className="App">
                 <div className="AppContents">
                     <div className="HiraganaCheckboxes">
-                        <ThemeProvider theme={tableTheme}>
-                            <Table className="HiraganaTable" size="small">
-                                <TableBody>
-                                    {
-                                        Hiragana.MainHiraganaRows.map((row, index) => {
-                                            return <TableRow className="HiraganaCheckboxRow" key={"hiragana-row-checkbox-row-" + index}>
-                                                <TableCell className="HiraganaCheckboxCell">
-                                                    <Checkbox
-                                                        value={index}
-                                                        checked={row.every((character) => character == null || this.state.selectedHiragana[character])}
-                                                        indeterminate={row.some(character => character != null && this.state.selectedHiragana[character] !== (this.state.selectedHiragana[String(row.find(element => element != null))]))}
-                                                        onChange={this.hiraganaRowCheckboxChangeHandler}
-                                                    />
-                                                </TableCell>
-                                                {
-                                                    row.map((character, index) => <TableCell className="HiraganaCheckboxCell" key={"hiragana-cell-checkbox-" + row[0] + "-" + index}>{character != null && <FormControlLabel
-                                                        control={<Checkbox key={"hiragana-checkbox-" + character} name={character} checked={this.state.selectedHiragana[character]} onChange={this.hiraganaCheckboxChangeHandler}/>}
-                                                        label={character}/>}</TableCell>)
-                                                }
-                                            </TableRow>
-                                        })
-                                    }
-                                </TableBody>
-                            </Table>
-                        </ThemeProvider>
-                        <Checkbox className="HiraganaAllCheckbox"
-                            checked={Object.values(this.state.selectedHiragana).every(value => value)}
-                            indeterminate={new Set(Object.values(this.state.selectedHiragana)).size === 2}
-                            onChange={this.hiraganaAllCheckboxChangeHandler}
+                        <CharacterCheckboxes
+                            characterRows={Hiragana.MainHiraganaRows}
+                            previouslySelectedCharacters={this.state.selectedHiragana}
+                            charactersChangedCallback={this.charactersChangedHandler}
+                        />
+                        <CharacterCheckboxes
+                            characterRows={Hiragana.AdditionalHiraganaRows}
+                            previouslySelectedCharacters={this.state.selectedHiragana}
+                            charactersChangedCallback={this.charactersChangedHandler}
+                        />
+                        <CharacterCheckboxes
+                            characterRows={Hiragana.SpecialHiraganaRows}
+                            previouslySelectedCharacters={this.state.selectedHiragana}
+                            charactersChangedCallback={this.charactersChangedHandler}
                         />
                         <div className="ApplyFilterButton">
                             <Button variant="contained" onClick={this.applyFilter}>Apply Filter</Button>
