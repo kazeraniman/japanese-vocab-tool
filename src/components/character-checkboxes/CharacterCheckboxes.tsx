@@ -16,11 +16,18 @@ const tableTheme = createTheme({
         MuiTable: {
             styleOverrides: {
                 root: {
-                    "maxWidth": '600px',
+                    "maxWidth": "600px",
                     "display": "block"
                 },
             },
         },
+        MuiTableCell: {
+            styleOverrides: {
+                root: {
+                    "color": "inherit"
+                }
+            }
+        }
     },
 });
 
@@ -111,12 +118,12 @@ class CharacterCheckboxes extends React.Component<IProps, IState> {
                             }
                         </TableBody>
                     </Table>
+                    <Checkbox className="CharacterAllCheckbox"
+                              checked={Object.values(this.state.selectedCharacters).every(value => value)}
+                              indeterminate={new Set(Object.values(this.state.selectedCharacters)).size === 2}
+                              onChange={this.characterAllCheckboxChangeHandler}
+                    />
                 </ThemeProvider>
-                <Checkbox className="CharacterAllCheckbox"
-                          checked={Object.values(this.state.selectedCharacters).every(value => value)}
-                          indeterminate={new Set(Object.values(this.state.selectedCharacters)).size === 2}
-                          onChange={this.characterAllCheckboxChangeHandler}
-                />
             </div>
         );
     }

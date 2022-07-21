@@ -34,7 +34,7 @@ class Hiragana {
         ['わ', null, null, null, 'を']
     ];
 
-    static AdditionalHiraganaRows = [
+    static DiacriticalMarkHiraganaRows = [
         ['が', 'ぎ', 'ぐ', 'げ', 'ご',],
         ['ざ', 'じ', 'ず', 'ぜ', 'ぞ',],
         ['だ', 'ぢ', 'づ', 'で', 'ど',],
@@ -42,9 +42,9 @@ class Hiragana {
         ['ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ',]
     ];
 
-    static SpecialHiraganaRows = [
+    static SmallHiraganaRows = [
         [ 'ゃ', null, 'ゅ', null, 'ょ'],
-        ['っ']
+        [null, null, 'っ', null, null]
     ]
 }
 
