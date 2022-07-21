@@ -14,7 +14,7 @@ import {
     Tab,
     Tabs, ThemeProvider,
     ToggleButton,
-    ToggleButtonGroup, Tooltip
+    ToggleButtonGroup, Tooltip, useMediaQuery
 } from "@mui/material";
 import {DataGrid, GridRowsProp, GridColDef} from '@mui/x-data-grid';
 import CharacterCheckboxes from "../character-checkboxes/CharacterCheckboxes";
@@ -58,18 +58,20 @@ function App() {
     const [charSets, setCharSets] = useState<{ [name: string]: Set<string> }>({});
     const [hiraganaTableTab, setHiraganaTableTab] = useState<number>(0);
     const [darkModeSetting, setDarkModeSetting] = useState<string>("light");
-    const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+    const systemDarkModeSetting = useMediaQuery("(prefers-color-scheme: dark)") ? DARK_THEME : LIGHT_THEME;
+
+    useEffect(() => {
+        let initialDarkModeSetting = localStorage.getItem(DARK_MODE_SETTING_LOCAL_STORAGE_KEY) || systemDarkModeSetting;
+        setDarkModeSetting(initialDarkModeSetting);
+    }, [systemDarkModeSetting])
 
     // Initial Construction
     useEffect(() => {
-        let darkModePreference = LIGHT_THEME;
         let previouslySelectedCharacters: { [name: string]: boolean } = JSON.parse(localStorage.getItem(SELECTED_HIRAGANA_LOCAL_STORAGE_KEY) || "{}");
         let initiallySelectedCharacters: { [name: string]: boolean } = Object.assign({}, ...Array.from(Hiragana.HiraganaSet).map((character) => ({[character]: previouslySelectedCharacters[character] == null ? true : previouslySelectedCharacters[character]})));
-        let initialDarkModeSetting = localStorage.getItem(DARK_MODE_SETTING_LOCAL_STORAGE_KEY) || darkModePreference;
 
         setSelectedHiragana(initiallySelectedCharacters);
-        setDarkModeSetting(initialDarkModeSetting);
-        setIsDarkMode(initialDarkModeSetting === DARK_THEME)
 
         let initialCharSets: { [name: string]: Set<string> } = {};
         fetch(DICT_URL)
@@ -111,7 +113,6 @@ function App() {
 
         localStorage.setItem(DARK_MODE_SETTING_LOCAL_STORAGE_KEY, nextMode);
         setDarkModeSetting(nextMode);
-        setIsDarkMode(nextMode === DARK_THEME)
     }
 
     function filterWordList() {
@@ -120,8 +121,12 @@ function App() {
         setIsLoaded(true);
     }
 
+    function isDarkMode(): boolean {
+        return darkModeSetting === DARK_THEME || (darkModeSetting === AUTO_THEME && systemDarkModeSetting === DARK_THEME)
+    }
+
     return (
-        <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+        <ThemeProvider theme={isDarkMode() ? darkTheme : lightTheme}>
             <CssBaseline />
             <div className="App">
                 {
