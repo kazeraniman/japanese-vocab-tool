@@ -57,14 +57,9 @@ function App() {
     const [selectedHiragana, setSelectedHiragana] = useState<{ [name: string]: boolean }>({});
     const [charSets, setCharSets] = useState<{ [name: string]: Set<string> }>({});
     const [hiraganaTableTab, setHiraganaTableTab] = useState<number>(0);
-    const [darkModeSetting, setDarkModeSetting] = useState<string>("light");
+    const [darkModeSetting, setDarkModeSetting] = useState<string>(localStorage.getItem(DARK_MODE_SETTING_LOCAL_STORAGE_KEY) || AUTO_THEME);
 
     const systemDarkModeSetting = useMediaQuery("(prefers-color-scheme: dark)") ? DARK_THEME : LIGHT_THEME;
-
-    useEffect(() => {
-        let initialDarkModeSetting = localStorage.getItem(DARK_MODE_SETTING_LOCAL_STORAGE_KEY) || systemDarkModeSetting;
-        setDarkModeSetting(initialDarkModeSetting);
-    }, [systemDarkModeSetting])
 
     // Initial Construction
     useEffect(() => {
